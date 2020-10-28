@@ -1,4 +1,4 @@
-# Conway's Game of Life
+# Conway's Game of Life on LED Matrix
 
 Written for the Matrix Portal M4 & 64x32 RGB Matrix using CircuitPython and Adafruit libraries.
 
@@ -25,10 +25,10 @@ The simulation restarts with a new random position if equilibrium is reached or 
 
 ## Usage
 
-Patterns are stored as \*.rle files in a patterns directory \\
+Patterns are stored as \*.rle files in a patterns directory.
 Use the Reset button to start over with a new pattern.
 
-TODO Toggle Speed, Color, or pattern with buttons \\
+TODO Toggle Speed, Color, or pattern with buttons
 TODO Read new patterns from web url
 
 ## Pattern File

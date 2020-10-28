@@ -22,15 +22,6 @@
 # TODO check for up/down buttons (pattern switch? speed change?)
 # TODO figure out button listening during sleep (timers?)
 # TODO Optimize nextgen calculation and display
-# TODO patterns to add
-# https://copy.sh/life/examples/
-# https://copy.sh/life/?pattern=blinkerpuffer1
-# https://copy.sh/life/?pattern=blinkerpuffer2
-# https://copy.sh/life/?pattern=hivenudger2
-# https://copy.sh/life/?pattern=noahsark
-# https://copy.sh/life/?pattern=puffer1
-# https://copy.sh/life/?pattern=puffer2
-# https://copy.sh/life/?pattern=pufferfish
 
 # Notes to self. CircuitPython has no: 
 # re.findall(), isAlpha(), isDigit(), os.path.isDir(), FileExistsError
