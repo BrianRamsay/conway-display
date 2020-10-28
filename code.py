@@ -96,26 +96,31 @@ def get_starting_grid():
     # create grid from a pattern file
     else:
         name, author, comment, rule, rle = '','','','',''
-        x_extent, y_extent = 0,0
+        x_extent, y_extent, x_start, y_start = 0,0,0,0
 
         # --------------------------------------------------
         # Get the information from a random pattern file
         # --------------------------------------------------
         patternfile = random.choice(os.listdir(PATTERNS_DIR))
         extent_details = re.compile("x ?= ?(\d+).*y ?= ?(\d+)(.*rule ?=(.*))?")
+        start_details = re.compile("(x ?= ?(\d+))?,? ?(y ?= ?(\d+))?")
         print(f"Loading {patternfile}")
         for line in open(f"{PATTERNS_DIR}/{patternfile}",'r'):
             if line[0] == '#':
                 if line[1] == 'N':
                     name += line[2:].strip()
-                elif line[2] == 'O':
+                elif line[1] == 'O':
                     author += line[2:].strip()
+                elif line[1] == 'X':
+                    match = start_details.match(line[2:].strip())
+                    if match:
+                        (toss, x_start, toss, y_start) = match.groups()
                 else: # treat unknown comments as 'C' comments
                     comment += line[2:].strip()
             elif line[0] == 'x':
 		match = extent_details.match(line)
                 if match:
-                    (x_extent, y_extent, throwaway, rule) = match.groups()
+                    (x_extent, y_extent, toss, rule) = match.groups()
 
             # we are left with the RLE
             elif line.strip():
@@ -132,44 +137,51 @@ def get_starting_grid():
             return get_starting_grid() # try again
 
         # Find pattern starting position
-        # Center the pattern (or put it in the top-left corner)
         # TODO rotate if necessary
-        x,y= 5,5
-        if x_extent:
+        x,y= 5,5        # if we don't know anything about it
+        if x_start:     # if the pattern tells us where to start
+            x = int(x_start)
+        elif x_extent:  # if we know the size of the pattern
             x = (MATRIX_WIDTH-x_extent) // 2
-        if y_extent:
+
+        if y_start:     # if the pattern tells us where to start
+            y = int(y_start)
+        elif y_extent:    # if we know the size of the pattern
             y = (MATRIX_HEIGHT-y_extent) // 2
 
         # Expand RLE and add to grid
         print(f"Expanding {rle}")
         is_digit = re.compile("\d")
         is_alpha = re.compile("[a-zA-Z]")
-        x_start = x
-        for line in rle.split("$"):
-            counter = ''
-            for c in line:
-                if is_digit.match(c):
-                    counter += c
-                elif is_alpha.match(c):
-                    counter = counter or '1'
-                    for xx in range(x, x+int(counter)):
-                        #print(f"Updating grid position x: {xx}, y: {y}, val: {c}")
-                        grid[y][xx] = 0 if c == 'b' else 1
-                    x += int(counter)
-                    counter = ''
-                else:
-                    pass
-            y += 1
-            x = x_start
+        x_reset = x
+        counter = ''
+        for char in rle:
+            if char == "$":
+                counter = ''
+                y += 1
+                x = x_reset
+            if is_digit.match(char):
+                counter += char
+            elif is_alpha.match(char):
+                counter = counter or '1'
+                for xx in range(x, x+int(counter)):
+                    #print(f"Updating grid position x: {xx}, y: {y}, val: {char}")
+                    grid[y][xx] = 0 if char == 'b' else 1
+                x += int(counter)
+                counter = ''
+            else:
+                pass
 
     # done creating grid
             
+    global color
     grid_color = random.randint(0,COLORS-1)
+    disp_color = f"{color[grid_color]:02X}"
     if not random.randint(0,19): # 5% chance for multicolor
 	grid_color = 'multicolor'
+        disp_color = grid_color
 
-    global color
-    print(f"Starting {name or patternfile} with color {color[grid_color]:02X}")
+    print(f"Starting {name or patternfile} with color {disp_color}")
     return grid, grid_color
 
 def live_cells(row, col, grid):

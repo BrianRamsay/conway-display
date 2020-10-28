@@ -2,4 +2,6 @@
 #O Randall Munroe
 #C Human figure that spawns a glider
 #C In memory of John Conway 1937-2020
+#X y=22
+x = 7, y = 9
 2b3o$2bobo$2bobo$3bo$ob3o$bobobo$3bo2bo$2bobo$2bobo!

@@ -33,7 +33,7 @@ TODO Read new patterns from web url
 
 ## Pattern File
 
-The format for the pattern files is expected to be like the ones from https://www.conwaylife.com. The only required line is the RLE itself.
+The format for the pattern files is expected to be like the ones from https://www.conwaylife.com. The only required line is the RLE itself. You can control how the pattern fits on display by providing the pattern extent or specifying it directly with a #X line.
 
 Example:
 
@@ -41,5 +41,6 @@ Example:
     #O Author/Originator. e.g., Richard K Guy
     #C Pattern information. e.g., The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.
     #C Multiple #C lines are ok.
-    x = 3, y = 3, rule = B3/S23 # specify the extent of the pattern. Helps determine initial placement and fit in the matrix.
+	#X designate a starting x and/or y for the pattern. e.g., x = 1, y= 1
+    x = 3, y = 3, rule = B3/S23 # specify the extent of the pattern. Helps determine initial placement and fit in the matrix. Pattern will be centered if no #X is given.
     bob$2bo$3o!
