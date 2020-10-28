@@ -161,7 +161,8 @@ def get_starting_grid():
     if not random.randint(0,19): # 5% chance for multicolor
 	grid_color = 'multicolor'
 
-    print(f"Starting {name or patternfile} with color {colors[grid_color]}")
+    global color
+    print(f"Starting {name or patternfile} with color {color[grid_color]:02X}")
     return grid, grid_color
 
 def live_cells(row, col, grid):
