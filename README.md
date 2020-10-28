@@ -13,7 +13,7 @@ The simulation restarts with a new random position if equilibrium is reached or 
 
 ## Installation
 
-  - Edit parameters in `conway.py` to match the size of the LED matrix.
+  - Edit parameters in `code.py` to match the size of the LED matrix.
   - Copy all repo contents to microcontroller, OR
 	  - Copy `code.py` to your microcontroller.
 	  - Copy the `lib/` directory to your microcontroller.
