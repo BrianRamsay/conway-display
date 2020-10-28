@@ -16,11 +16,12 @@
 #  - get the next population
 #  - check for an end state (to restart)
 #
+# TODO Add option to specify starting position for pattern
+# TODO make grid larger than display to avoid edge artifacts
 # TODO automatically rotate patterns?
-# TODO check for up/down buttons (pattern rotate? speed change?)
+# TODO check for up/down buttons (pattern switch? speed change?)
 # TODO figure out button listening during sleep (timers?)
 # TODO Optimize nextgen calculation and display
-# TODO make grid larger than display to avoid edge artifacts
 # TODO patterns to add
 # https://copy.sh/life/examples/
 # https://copy.sh/life/?pattern=blinkerpuffer1
@@ -43,7 +44,7 @@ from adafruit_matrixportal.matrix import Matrix
 
 MATRIX_WIDTH=64
 MATRIX_HEIGHT=32
-COLORS=5
+COLORS=1024
 MAX_GENERATIONS=500
 TIMING_ON=False
 PATTERNS_DIR='patterns'
@@ -157,10 +158,10 @@ def get_starting_grid():
     # done creating grid
             
     grid_color = random.randint(0,COLORS-1)
-    if not grid_color:
+    if not random.randint(0,19): # 5% chance for multicolor
 	grid_color = 'multicolor'
 
-    print(f"Starting {name or patternfile} with color {grid_color}")
+    print(f"Starting {name or patternfile} with color {colors[grid_color]}")
     return grid, grid_color
 
 def live_cells(row, col, grid):
@@ -253,5 +254,5 @@ while True:
 	restart = True
 
     if generation > MAX_GENERATIONS:
-        print("Starting New Pattern")
+        print(f"{MAX_GENERATIONS} generations reached! Starting over")
 	restart = True
