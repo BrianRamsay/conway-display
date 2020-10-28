@@ -14,8 +14,8 @@ The simulation restarts with a new random position if equilibrium is reached or 
 ## Installation
 
   - Edit parameters in `conway.py` to match the size of the LED matrix.
-  - Copy repo contents to microcontroller, OR
-	  - Copy `conway.py` to `code.py` on your microcontroller.
+  - Copy all repo contents to microcontroller, OR
+	  - Copy `code.py` to your microcontroller.
 	  - Copy the `lib/` directory to your microcontroller.
 	  - Copy `boot.py` to your microcontroller.
 	  - Copy `patterns/` to your microcontroller if you want more than 2 patterns
@@ -25,10 +25,10 @@ The simulation restarts with a new random position if equilibrium is reached or 
 
 ## Usage
 
-Patterns are stored as \*.rle files in a patterns directory
+Patterns are stored as \*.rle files in a patterns directory \\
 Use the Reset button to start over with a new pattern.
 
-TODO Toggle Speed, Color, or pattern with buttons
+TODO Toggle Speed, Color, or pattern with buttons \\
 TODO Read new patterns from web url
 
 ## Pattern File
@@ -41,5 +41,5 @@ Example:
     #O Author/Originator. e.g., Richard K Guy
     #C Pattern information. e.g., The smallest, most common, and first discovered spaceship. Diagonal, has period 4 and speed c/4.
     #C Multiple #C lines are ok.
-    x = 3, y = 3, rule = B3/S23 # specify the extent of the pattern.
+    x = 3, y = 3, rule = B3/S23 # specify the extent of the pattern. Helps determine initial placement and fit in the matrix.
     bob$2bo$3o!
