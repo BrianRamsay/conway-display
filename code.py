@@ -42,16 +42,20 @@ import re
 import displayio
 from adafruit_matrixportal.matrix import Matrix
 
+# --------------------------------------------------
+# Change parameters to suit your application
+# --------------------------------------------------
 MATRIX_WIDTH=64
 MATRIX_HEIGHT=32
 COLORS=1024
 MAX_GENERATIONS=500
-TIMING_ON=False
+
+TIMING_OUTPUT=False
 PATTERNS_DIR='patterns'
 
 
 # Create the patterns directory and add patterns if it doesn't exist
-# Tried with a FileExistsError and found that doesn't exist in CircuitPython
+# TODO waiting for boot.py and pin jumper setup
 """
 os.mkdir(PATTERNS_DIR)
 with open(f"{PATTERNS_DIR}/rpentomino.rle",'w') as file:
@@ -94,8 +98,9 @@ def get_starting_grid():
         name, author, comment, rule, rle = '','','','',''
         x_extent, y_extent = 0,0
 
-        # Get the information from a random file
-        # -------------------------
+        # --------------------------------------------------
+        # Get the information from a random pattern file
+        # --------------------------------------------------
         patternfile = random.choice(os.listdir(PATTERNS_DIR))
         extent_details = re.compile("x ?= ?(\d+).*y ?= ?(\d+)(.*rule ?=(.*))?")
         print(f"Loading {patternfile}")
@@ -117,8 +122,10 @@ def get_starting_grid():
                 rle += line.strip()
 
 
+        # --------------------------------------------------
         # Create grid from pattern
-        # -------------------------
+        # --------------------------------------------------
+
 	x_extent, y_extent = int(x_extent), int(y_extent)
         if x_extent > MATRIX_WIDTH or y_extent > MATRIX_HEIGHT:
             print(f"The pattern from {patternfile} is too big!")
@@ -212,10 +219,10 @@ def display_grid(grid, grid_color):
 restart = True
 while True:
     if restart:
-	if TIMING_ON:
+	if TIMING_OUTPUT:
 	    tic = time.monotonic()
 	grid, grid_color = get_starting_grid()
-	if TIMING_ON:
+	if TIMING_OUTPUT:
 	    toc = time.monotonic()
 	    print(f"{toc - tic:0.4f} seconds to create starting grid")
 	prev_grid = grid        # detect equilibrium
@@ -225,10 +232,10 @@ while True:
 
     # TODO Check for button presses
 
-    if TIMING_ON:
+    if TIMING_OUTPUT:
 	tic = time.monotonic()
     display_grid(grid, grid_color)
-    if TIMING_ON:
+    if TIMING_OUTPUT:
 	toc = time.monotonic()
 	print(f"{toc - tic:0.4f} seconds to display grid")
     if generation == 0:
@@ -236,12 +243,12 @@ while True:
 
     prev_prev_grid = prev_grid
     prev_grid = grid
-    if TIMING_ON:
+    if TIMING_OUTPUT:
 	tic = time.monotonic()
     grid = next_population(grid)
     generation += 1
 
-    if TIMING_ON:
+    if TIMING_OUTPUT:
 	toc = time.monotonic()
 	print(f"{toc - tic:0.4f} seconds to generate next population")
 
