@@ -1,6 +1,6 @@
 # Conway's Game of Life
 
-Written for the Matrix Portal M4 & 64x32 RGB Matrix using Adafruit libraries.
+Written for the Matrix Portal M4 & 64x32 RGB Matrix using CircuitPython and Adafruit libraries.
 
 Reads from \*.rle files to set the initial starting positions. There are two patterns included by default. Find more patterns at https://www.conwaylife.com/ and https://copy.sh/life/examples/.
 
