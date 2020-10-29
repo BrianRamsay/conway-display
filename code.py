@@ -16,8 +16,6 @@
 #  - get the next population
 #  - check for an end state (to restart)
 #
-# TODO Add option to specify starting position for pattern
-# TODO make grid larger than display to avoid edge artifacts
 # TODO automatically rotate patterns?
 # TODO check for up/down buttons (pattern switch? speed change?)
 # TODO figure out button listening during sleep (timers?)
@@ -36,17 +34,18 @@ from adafruit_matrixportal.matrix import Matrix
 # --------------------------------------------------
 # Change parameters to suit your application
 # --------------------------------------------------
-MATRIX_WIDTH=64
-MATRIX_HEIGHT=32
-COLORS=1024
-MAX_GENERATIONS=500
+MATRIX_WIDTH=64     # width of the LED matrix
+MATRIX_HEIGHT=32    # height of the LED matrix
+GRID_MARGIN=2       # undisplayed pixels at the edge of the grid
 
-TIMING_OUTPUT=False
-PATTERNS_DIR='patterns'
+COLORS=1024         # number of random colors to choose from
+MAX_GENERATIONS=500 # number of generations before a restart
 
+TIMING_OUTPUT=True # display timing information for generation and display
+PATTERNS_DIR='patterns' # directory where we store the *.rle patterns
 
 # Create the patterns directory and add patterns if it doesn't exist
-# TODO waiting for boot.py and pin jumper setup
+# XXX waiting for boot.py and pin jumper setup
 """
 os.mkdir(PATTERNS_DIR)
 with open(f"{PATTERNS_DIR}/rpentomino.rle",'w') as file:
@@ -70,22 +69,18 @@ for i in range(1,COLORS):
 group.append(displayio.TileGrid(bitmap, pixel_shader=color))
 # ---------------------
 
-def get_blank_grid():
-    return [[0]*MATRIX_WIDTH for i in range(0,MATRIX_HEIGHT)]
+GRID_WIDTH = MATRIX_WIDTH + GRID_MARGIN * 2
+GRID_HEIGHT = MATRIX_HEIGHT + GRID_MARGIN * 2
+def init_grid(random_fill=False):
+    return [[random.randint(0,1) if random_fill else 0]*GRID_WIDTH 
+            for i in range(0,GRID_HEIGHT)]
 
 def get_starting_grid():
-    print()
-    grid = get_blank_grid()
-
-    # 1 in 25 chance of a random 50% fill
-    if not random.randint(0,24):
-      name = 'random fill'
-      for row in range(0,MATRIX_HEIGHT):
-        for col in range(0,MATRIX_WIDTH):
-          grid[row][col] = random.randint(0,1)
+    random_fill = not random.randint(0,24)   # 1 in 25 chance of a random 50% fill
+    grid = init_grid(random_fill)
 
     # create grid from a pattern file
-    else:
+    if not random_fill:
         name, author, comment, rule, rle = '','','','',''
         x_extent, y_extent, x_start, y_start = 0,0,0,0
 
@@ -123,7 +118,7 @@ def get_starting_grid():
         # --------------------------------------------------
 
 	x_extent, y_extent = int(x_extent), int(y_extent)
-        if x_extent > MATRIX_WIDTH or y_extent > MATRIX_HEIGHT:
+        if x_extent > GRID_WIDTH or y_extent > GRID_HEIGHT:
             print(f"The pattern from {patternfile} is too big!")
             return get_starting_grid() # try again
 
@@ -133,12 +128,12 @@ def get_starting_grid():
         if x_start:     # if the pattern tells us where to start
             x = int(x_start)
         elif x_extent:  # if we know the size of the pattern
-            x = (MATRIX_WIDTH-x_extent) // 2
+            x = (GRID_WIDTH-x_extent) // 2
 
         if y_start:     # if the pattern tells us where to start
             y = int(y_start)
         elif y_extent:    # if we know the size of the pattern
-            y = (MATRIX_HEIGHT-y_extent) // 2
+            y = (GRID_HEIGHT-y_extent) // 2
 
         # Expand RLE and add to grid
         print(f"Expanding {rle}")
@@ -172,7 +167,7 @@ def get_starting_grid():
 	grid_color = 'multicolor'
         disp_color = grid_color
 
-    print(f"Starting {name or patternfile} with color {disp_color}")
+    print(f"Starting {'random_fill' if random_fill else patternfile} with color {disp_color}")
     return grid, grid_color
 
 def live_cells(row, col, grid):
@@ -184,16 +179,16 @@ def live_cells(row, col, grid):
     neighbors += sum(grid[row][min_col:col+2])
     neighbors -= grid[row][col] # remove the middle
 
-    if row < MATRIX_HEIGHT - 1:
+    if row < GRID_HEIGHT - 1:
         neighbors += sum(grid[row+1][min_col:col+2])
 
     return neighbors
     
 def next_population(oldgrid):
     # seems naive
-    new_grid = get_blank_grid()
-    for row in range(0,MATRIX_HEIGHT):
-        for col in range(0,MATRIX_WIDTH):
+    new_grid = init_grid()
+    for row in range(0,GRID_HEIGHT):
+        for col in range(0,GRID_WIDTH):
             alive = bool(oldgrid[row][col])
 	    cell_count = live_cells(row, col, oldgrid)
             new_grid[row][col] = int(
@@ -211,7 +206,7 @@ def display_grid(grid, grid_color):
         for col in range(0,MATRIX_WIDTH):
 	    if grid_color == 'multicolor':
 		random_color = random.randint(1,COLORS-1) # avoid black
-      	    bitmap[col,row] = grid[row][col] * random_color
+      	    bitmap[col,row] = grid[row+GRID_MARGIN][col+GRID_MARGIN] * random_color
 
     display.show(group)
 
